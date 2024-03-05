@@ -143,5 +143,46 @@ router.get("/singup/:id", function (req, res, next) {
     }
 });
 
+// POST /competition /izmjena bodova  
+router.post("/IzmjenaBodova/:id", adminRequired, function (req, res, next) {
+    // do validation
+    const result = schema_add.validate(req.body);
+    if (result.error) {
+        throw new Error("Greška prilikom izmjene bodova")
+    }
+
+    const stmt = db.prepare("UPDATE signed_up SET bodovi = ? WHERE id = ?;");
+    const rezultatIzmjena = stmt.run(req.body.id, req.body.bodovi);
+
+    if (!rezultatIzmjena) {
+        throw new Error("Neispravam poziv")
+    } else {
+        res.redirect("/competitions/singupC/" + req.body.user_id)
+    }
+});
+
+// GET / competitions/ PRIJAVLJEN/ ID
+router.get("/singedup/:id", function (req, res, next) {
+    // do validation
+    const result = schema_id.validate(req.params);
+    if (result.error) {
+        throw new Error("Neispravan poziv");
+    }
+
+    const stmt2 = db.prepare("SELECT * FROM signed_up WHERE competition_id = ? ORDER BY bodovi");
+    const prikazID = stmt2.all(req.params.id);
+
+    if(prikazID){
+        res.render("competitions/signedup", { result: { item: prikazID } });
+    }
+    else{
+        res.render("competitions/signedup", { result: { database_error: true } });
+    }
+});
+
+
+
+
+
 
 module.exports = router;
