@@ -30,10 +30,16 @@ router.get("/delete/:id", adminRequired, function (req, res, next) {
         throw new Error("Neispravan poziv");
     }
 
+
+    const stmt2 = db.prepare("DELETE FROM signed_up WHERE competition_id = ?;");
+    const deleteResult2 = stmt2.run(req.params.id);
+
     const stmt = db.prepare("DELETE FROM competitions WHERE id = ?;");
     const deleteResult = stmt.run(req.params.id);
 
-    if (!deleteResult.changes || deleteResult.changes !== 1) {
+    
+
+    if (!deleteResult2.changes || !deleteResult.changes || deleteResult.changes||  deleteResult2.changes !== 1) {
         throw new Error("Operacija nije uspjela");
     }
 
@@ -194,6 +200,28 @@ router.get("/ljestvica/:id", function (req, res, next) {
     const stmt = db.prepare("SELECT c.apply_till, c.name AS natjecanje, su.bodovii, u.name FROM signed_up su JOIN competitions c ON su.competition_id = c.id JOIN users u ON su.user_id = u.id WHERE su.competition_id = ? ORDER BY su.bodovii DESC;");
     const resultDB = stmt.all(req.params.id);
 
-    res.render("competitions/ljestvica", { result: { items: resultDB , noMenu: true} });
+    res.render("competitions/ljestvica", { result: { items: resultDB , ljestvica: true} });
 })
+
+// POST /competition /editANSW  
+router.post("/editAnsw/:id", adminRequired, function (req, res, next) {
+    // do validation
+    const result = schema_add.validate(req.body);
+    if (result.error) {
+        throw new Error("Greška prilikom unosa točnih odgovora")
+    }
+
+    const stmt = db.prepare("UPDATE signed_up SET bodovii = ? WHERE id = ?;");
+    const rezultatIzmjena = stmt.run(req.body.id, req.body.bodovii);
+
+    if (!rezultatIzmjena) {
+        throw new Error("Neispravam poziv")
+    } else {
+        res.redirect("/competitions/signedup/" + req.body.user_id)
+    }
+});
+
+   
+
+
     module.exports = router;

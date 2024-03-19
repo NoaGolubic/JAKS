@@ -9,6 +9,7 @@
 
 <body>
     {{#if user}}
+    {{#unless result.ljestvica}}
     <div class="flex flex-wrap gap-2 bg-base-200 p-2">
         <div class="flex-1">
             <a href="/competitions" class="btn btn-sm btn-accent">Natjecanja</a>
@@ -21,6 +22,7 @@
             <a href="/users/signout" class="btn btn-sm btn-accent">Odjava</a>
         </div>
     </div>
+    {{/unless}}
     {{/if}}
     {{{body}}}
 </body>
