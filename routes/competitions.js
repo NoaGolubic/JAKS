@@ -151,29 +151,29 @@ router.post("/IzmjenaBodova/:id", adminRequired, function (req, res, next) {
         throw new Error("Greška prilikom izmjene bodova")
     }
 
-    const stmt = db.prepare("UPDATE signed_up SET bodovi = ? WHERE id = ?;");
-    const rezultatIzmjena = stmt.run(req.body.id, req.body.bodovi);
+    const stmt = db.prepare("UPDATE signed_up SET bodovii = ? WHERE id = ?;");
+    const rezultatIzmjena = stmt.run(req.body.id, req.body.bodovii);
 
     if (!rezultatIzmjena) {
         throw new Error("Neispravam poziv")
     } else {
-        res.redirect("/competitions/singupC/" + req.body.user_id)
+        res.redirect("/competitions/signedup/" + req.body.user_id)
     }
 });
 
-// GET / competitions/ PRIJAVLJEN/ ID
-router.get("/singedup/:id", function (req, res, next) {
+// GET / competitions/ signup/ ID
+router.get("/signedup/:id", function (req, res, next) {
     // do validation
     const result = schema_id.validate(req.params);
     if (result.error) {
         throw new Error("Neispravan poziv");
     }
 
-    const stmt2 = db.prepare("SELECT * FROM signed_up WHERE competition_id = ? ORDER BY bodovi");
+    const stmt2 = db.prepare("SELECT * FROM signed_up WHERE competition_id = ? ORDER BY bodovii");
     const prikazID = stmt2.all(req.params.id);
 
     if(prikazID){
-        res.render("competitions/signedup", { result: { item: prikazID } });
+        res.render("competitions/signedup", { result: { items: prikazID } });
     }
     else{
         res.render("competitions/signedup", { result: { database_error: true } });
@@ -182,7 +182,18 @@ router.get("/singedup/:id", function (req, res, next) {
 
 
 
+    //GET /competitions/ljestvica
 
+router.get("/ljestvica/:id", function (req, res, next) {
+    // do validation
+    const result = schema_id.validate(req.params);
+    if (result.error) {
+        throw new Error("Neispravan poziv");
+    }
 
+    const stmt = db.prepare("SELECT c.apply_till, c.name AS natjecanje, su.bodovii, u.name FROM signed_up su JOIN competitions c ON su.competition_id = c.id JOIN users u ON su.user_id = u.id WHERE su.competition_id = ? ORDER BY su.bodovii DESC;");
+    const resultDB = stmt.all(req.params.id);
 
-module.exports = router;
+    res.render("competitions/ljestvica", { result: { items: resultDB , noMenu: true} });
+})
+    module.exports = router;

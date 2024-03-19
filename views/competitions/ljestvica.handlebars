@@ -1,0 +1,55 @@
+<style>
+    .container {
+        text-align: center;
+    }
+
+    .text-container {
+        margin-top: 20px; 
+    }
+
+    .table-container {
+        margin-top: 150px; 
+        margin-left: 300px; 
+    }
+
+    .table {
+        border-collapse: separate;
+    }
+
+    .table th, .table td {
+        border-bottom: 1px solid transparent;
+        padding: 8px;
+    }
+</style>
+
+<div class="container">
+    <div class="text-container">
+        <div class="flex justify-center text-6xl">{{result.items.[0].natjecanje}}</div>
+    </div>
+    <div class="table-container">
+        <div class="overflow-x-auto flex">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Mjesto</th>
+                        <th>Ime Natjecatelja</th>
+                        <th>Broj bodova</th>
+                        <th>Rok prijave</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each result.items}}
+                    <tr>
+                        <td x-data="{}">
+                            <span x-text="{{@index}}+1"></span>
+                        </td>
+                        <th>{{this.name}}</th>
+                        <td>{{this.bodovii}}</td>
+                        <td>{{this.apply_till}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
