@@ -25,10 +25,18 @@
                         </label>
                     </div>
                 </div>
-                <input type="submit" class="btn btn-primary" value="Potvrdi" />
-                <input type="reset" class="btn btn-neutral" value="Poništi" />
+                <div class="flex justify-between items-center">
+                    <div>
+                        <input type="submit" class="btn btn-primary" value="Potvrdi" />
+                        <input type="reset" class="btn btn-neutral" value="Poništi" />
+                    </div>
+                </div>
             </form>
             {{/if}}
+            
+            <div class="mt-4">
+              <a href="/users/promjenaLozinke" class="btn btn-primary">Zaboravili ste lozinku?</a>
+            </div>
 
             {{#if result.validation_error}}
             {{> validation_error}}

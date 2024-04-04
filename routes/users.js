@@ -129,16 +129,21 @@ router.post("/signin", function (req, res, next) {
   }
 });
 
+
+//////////////////////////////////////////////////////////////
 // SCHEMA signup
 const schema_signup = Joi.object({
   name: Joi.string().min(3).max(50).required(),
   email: Joi.string().email().max(50).required(),
   password: Joi.string().min(3).max(50).required(),
-  password_check: Joi.ref("password")
+  password_check: Joi.ref("password"),
+  datumR: Joi.string().max(8).required(),
+  ustanova: Joi.string().max(30).required(),
+  OIB: Joi.string().max(11).required()
 });
 
 // GET /users/signup
-router.get("/signup", function (req, res, next) {
+router.get("/users/signup", function (req, res, next) {
   res.render("users/signup", { result: { display_form: true } });
 });
 
@@ -157,7 +162,7 @@ router.post("/signup", function (req, res, next) {
   }
 
   const passwordHash = bcrypt.hashSync(req.body.password, 10);
-  const stmt2 = db.prepare("INSERT INTO users (email, password, name, signed_at, role) VALUES (?, ?, ?, ?, ?);");
+  const stmt2 = db.prepare("INSERT INTO users (email, password, name, signed_at, role,OIB,datumR,ustanova) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
   const insertResult = stmt2.run(req.body.email, passwordHash, req.body.name, new Date().toISOString(), "user");
 
   if (insertResult.changes && insertResult.changes === 1) {
@@ -166,6 +171,47 @@ router.post("/signup", function (req, res, next) {
     res.render("users/signup", { result: { database_error: true } });
   }
   return;
+});
+
+// GET /users/dataProfil
+router.get("/data", authRequired, function (req, res, next) {
+  const stmt = db.prepare(`
+    SELECT c.name AS competition_name, c.apply_till AS competition_time 
+    FROM signed_up su JOIN competitions c ON su.competition_id = c.id 
+    WHERE su.user_id = ?`);
+  const competitions = stmt.all(req.user.sub);
+  res.render("users/data", { result: { display_form: true, competitions: competitions } });
+});
+
+///////
+// GET /users/promjenaLozinke
+router.get("/promjenaLozinke", function (req, res, next) {
+  res.render("users/promjenaLozinke", { result: { display_form: true } });
+});
+
+// POST /users/promjenaLozinke
+router.post("/promjenaLozinke", function (req, res, next) {
+  const { email, novaLozinka, ponovljenaLozinka } = req.body;
+
+  // Check if the passwords match
+  if (novaLozinka !== ponovljenaLozinka) {
+    res.render("users/promjenaLozinke", { result: { passwordnotuniq: true, display_form: true } });
+    return;
+  }
+
+
+  const stmt = db.prepare("SELECT * FROM users WHERE email = ?");
+  const user = stmt.get(email);
+  if (!user) {
+    res.render("users/promjenaLozinke", { result: { emailnotfound: true, display_form: true } });
+    return;
+  }
+
+  const passwordHash = bcrypt.hashSync(novaLozinka, 10);
+  const updateStmt = db.prepare("UPDATE users SET password = ? WHERE email = ?");
+  updateStmt.run(passwordHash, email);
+
+  res.render("users/promjenaLozinke", { result: { success: true } });
 });
 
 module.exports = router;

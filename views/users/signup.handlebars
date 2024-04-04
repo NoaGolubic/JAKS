@@ -12,7 +12,34 @@
                                 <span class="label-text">Ime i prezime</span>
                             </div>
                             <input type="text" name="name" placeholder="Upišite svoje ime i prezime"
-                                class="input input-bordered w-full max-w-xs" required="" />
+                                class="input input-bordered w-full max-w-xs" required=""  readonly/>
+                        </label>
+                    </div>
+                     <div>
+                        <label class="form-control w-full max-w-xs">
+                            <div class="label">
+                                <span class="label-text">Datum rođenja</span>
+                            </div>
+                            <input type="text" name="datumR" placeholder="DD/MM/YYYY"
+                                class="input input-bordered w-full max-w-xs" required=""readonly />
+                        </label>
+                    </div>
+                      <div>
+                        <label class="form-control w-full max-w-xs">
+                            <div class="label">
+                                <span class="label-text">Naziv ustanove</span>
+                            </div>
+                            <input type="text" name="ustanova" placeholder="Upišite naziv ustanove"
+                                class="input input-bordered w-full max-w-xs" required="" readonly/>
+                        </label>
+                    </div>
+                     <div>
+                        <label class="form-control w-full max-w-xs">
+                            <div class="label">
+                                <span class="label-text">OIB</span>
+                            </div>
+                            <input type="text" name="OIB" placeholder="Upišite jedaneastoznamenkasti broj"
+                                class="input input-bordered w-full max-w-xs" required="" readonly />
                         </label>
                     </div>
                     <div>
@@ -21,7 +48,7 @@
                                 <span class="label-text">E-mail adresa</span>
                             </div>
                             <input type="email" name="email" placeholder="Upišite svoju e-mail adresu"
-                                class="input input-bordered w-full max-w-xs" required="" />
+                                class="input input-bordered w-full max-w-xs" required="" readonly />
                         </label>
                     </div>
                     <div>
@@ -30,7 +57,7 @@
                                 <span class="label-text">Zaporka</span>
                             </div>
                             <input type="password" name="password" placeholder="Upišite svoju zaporku"
-                                class="input input-bordered w-full max-w-xs" />
+                                class="input input-bordered w-full max-w-xs" readonly />
                         </label>
                     </div>
                     <div>
@@ -39,12 +66,11 @@
                                 <span class="label-text">Potvrda zaporke</span>
                             </div>
                             <input type="password" name="password_check" placeholder="Ponovite svoju zaporku"
-                                class="input input-bordered w-full max-w-xs" />
+                                class="input input-bordered w-full max-w-xs" readonly />
                         </label>
                     </div>
                 </div>
-                <input type="submit" class="btn btn-primary" value="Potvrdi" />
-                <input type="reset" class="btn btn-neutral" value="Poništi" />
+                
             </form>
             {{/if}}
 

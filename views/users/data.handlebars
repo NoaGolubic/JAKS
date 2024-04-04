@@ -1,20 +1,38 @@
 <div class="p-2">
     {{#if result.display_form}}
     <form method="post" action="/users/data" class="flex flex-col gap-2">
-        <div class="pb-2 flex flex-col">
+        <div class="pb-2 flex flex-col w-1/3">
             <label>Ime i prezime</label>
-            <input type="text" name="name" value="{{user.name}}" class="bg-neutral" />
+            <input type="text" name="name" value="{{user.name}}" class="bg-white" readonly />
         </div>
-        <div class="pb-2 flex flex-col">
+        <div class="pb-2 flex flex-col w-1/3">
             <label>E-mail adresa</label>
-            <input type="email" name="email" value="{{user.email}}" class="bg-neutral" />
+            <input type="text" name="email" value="{{user.email}}" class="bg-white" readonly />
         </div>
-        <div class="pb-2 flex flex-col">
-            <label>Zaporka</label>
-            <input type="password" name="password" class="bg-neutral" />
+        <div class="pb-2 flex flex-col w-1/3">
+            <label>Datum rođenja</label>
+            <input type="text" name="datumR" value="{{user.datumR}}"  class="bg-white" readonly />
+        </div>
+        <div class="pb-2 flex flex-col w-1/3">
+            <label>OIB</label>
+            <input type="text" name="OIB" value="{{user.OIB}}"  class="bg-white" readonly />
+        </div>
+        <div class="pb-2 flex flex-col w-1/3">
+            <label>Ustanova</label>
+            <input type="text" name="ustanova" value="{{user.ustanova}}"  class="bg-white" readonly />
         </div>
         {{> form_buttons }}
+        
     </form>
+    
+    {{#if result.competition}}
+        <h2>Natjecanja u tijeku:</h2>
+        <ul>
+            {{#each result.competition}}
+          <li>{{this.competition_name}} - {{this.competition_time}}</li>
+            {{/each}}
+        </ul>
+    {{/if}}
     {{/if}}
 
     {{#if result.validation_error}}

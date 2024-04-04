@@ -1,0 +1,52 @@
+<div class="max-w-md flex justify-center items-center h-screen">
+    <div>
+        {{#if result.passwordnotunique}}
+        <p class="text-center text-lg text-black">Lozinka je uspješno promijenjena.</p>
+        {{/if}}
+
+        {{#if result.emailnotfound}}
+        <p class="text-center text-lg text-black">E-mail adresa nije pronađena.</p>
+        {{/if}}
+
+        {{#if result.success}}
+        <p class="text-center text-2xl text-black">Lozinka je uspješno promijenjena.</p>
+        {{/if}}
+
+        {{#if result.display_form}}
+        <h1 class="text-5xl font-bold text-center">Promjena lozinke</h1>
+
+        <form method="post" action="/users/promjenaLozinke">
+            <div class="py-6">
+                <div>
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">E-mail adresa</span>
+                        </div>
+                        <input type="email" name="email" placeholder="Upišite svoju e-mail adresu"
+                            class="input input-bordered w-full max-w-xs" required="" />
+                    </label>
+                </div>
+                <div>
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">Nova lozinka</span>
+                        </div>
+                        <input type="password" name="novaLozinka" placeholder="Unesite novu lozinku"
+                            class="input input-bordered w-full max-w-xs" required="" />
+                    </label>
+                </div>
+                <div>
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">Ponovi lozinku</span>
+                        </div>
+                        <input type="password" name="ponovljenaLozinka" placeholder="Ponovite novu lozinku"
+                            class="input input-bordered w-full max-w-xs" required="" />
+                    </label>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-primary" value="Promijeni lozinku" />
+        </form>
+        {{/if}}
+    </div>
+</div>
