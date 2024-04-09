@@ -34,10 +34,11 @@
             </form>
             {{/if}}
             
+            {{#unless result.success}}
             <div class="mt-4">
               <a href="/users/promjenaLozinke" class="btn btn-primary">Zaboravili ste lozinku?</a>
             </div>
-
+{{/unless}}
             {{#if result.validation_error}}
             {{> validation_error}}
             {{/if}}

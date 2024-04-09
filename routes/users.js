@@ -143,14 +143,16 @@ const schema_signup = Joi.object({
 });
 
 // GET /users/signup
-router.get("/users/signup", function (req, res, next) {
+router.get("/signup", function (req, res, next) {
   res.render("users/signup", { result: { display_form: true } });
 });
 
 // POST /users/signup
 router.post("/signup", function (req, res, next) {
   // do validation
-  const result = schema_signup.validate(req.body);
+  const result = schema_signup.validate(req.body); 
+
+  //NE valja nest
   if (result.error) {
     res.render("users/signup", { result: { validation_error: true, display_form: true } });
     return;
@@ -162,7 +164,7 @@ router.post("/signup", function (req, res, next) {
   }
 
   const passwordHash = bcrypt.hashSync(req.body.password, 10);
-  const stmt2 = db.prepare("INSERT INTO users (email, password, name, signed_at, role,OIB,datumR,ustanova) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+  const stmt2 = db.prepare("INSERT INTO users (email, password, name, signed_at, role, OIB, datumR, ustanova) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
   const insertResult = stmt2.run(req.body.email, passwordHash, req.body.name, new Date().toISOString(), "user");
 
   if (insertResult.changes && insertResult.changes === 1) {
