@@ -152,18 +152,20 @@ router.get("/singup/:id", function (req, res, next) {
 // POST /competition /izmjena bodova  
 router.post("/IzmjenaBodova/:id", adminRequired, function (req, res, next) {
     // do validation
-    const result = schema_add.validate(req.body);
+    const result = schema_id.validate({ id: req.params.id });
     if (result.error) {
-        throw new Error("Greška prilikom izmjene bodova")
+        throw new Error("Greška prilikom izmjene bodova");
     }
 
-    const stmt = db.prepare("UPDATE signed_up SET bodovii = ? WHERE id = ?;");
-    const rezultatIzmjena = stmt.run(req.body.id, req.body.bodovii);
+    const { bodovi } = req.body;
 
-    if (!rezultatIzmjena) {
-        throw new Error("Neispravam poziv")
+    const stmt = db.prepare("UPDATE signed_up SET bodovii = ? WHERE id = ?;");
+    const updateResult = stmt.run(bodovi, req.params.id);
+
+    if (updateResult.changes && updateResult.changes === 1) {
+        res.redirect("/competitions/signedup/" + req.body.competition_id);
     } else {
-        res.redirect("/competitions/signedup/" + req.body.user_id)
+        throw new Error("Operacija nije uspjela");
     }
 });
 

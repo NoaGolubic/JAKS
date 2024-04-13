@@ -17,7 +17,7 @@ const schema_data = Joi.object({
 });
 
 // POST /users/data
-router.post("/data", authRequired, function (req, res, next) {
+router.post("/data/", authRequired, function (req, res, next) {
   // do validation
   const result = schema_data.validate(req.body);
   if (result.error) {

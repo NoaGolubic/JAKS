@@ -1,44 +1,44 @@
-
 {{#if result.database_error}}
-    <div>{{ database_error }}</div>
+<div>{{ database_error }}</div>
 {{else}}
-    <div class="overflow-x-auto">
-        <table class="table">
-            
-            <thead>
-                <tr>
-                    <th>ID rezultata</th>
-                    <th>ID korisnika</th>
-                    <th>ID natjecanja</th>
-                    <th>Datum prijavljivanja</th>
-                    <th>Broj bodova</th>
-                    
-                </tr>
-            </thead>
-          
-            <tbody>
-                {{#each result.items}}
-                    <tr>
-                        <td>{{this.id}}</td>
-                        <td>{{this.user_id}}</td>
-                        <td>{{this.competition_id}}</td>
-                        <td x-data="{}">
-                            <span x-text="new Date('{{this.signeddd_at}}').toLocaleString()"></span>
-                        </td>
-                        <td>{{this.bodovii}}</td>
-                        <td>
-                            <form method="post" action="/competitions/IzmjenaBodova/{{this.id}}" class="flex flex-col gap-2">
-                                <div class="pb-2 flex flex-col">
-                                    <label>Bodovi</label>
-                                    <input type="text" name="bodovi" required="" minlength="1" maxlength="3" value="{{this.bodovii}}" />
-                                    <input type="text" name="competition_id" required="" hidden="" minlength="3" maxlength="50" value="{{this.competition_id}}" />
-                                </div>
-                                <input  type="submit" value="Potvrdi" class="flex-1 btn btn-primary" />
-                            </form>
-                        </td>
-                    </tr>
-                {{/each}}
-            </tbody>
-        </table>
-    </div>
+<div class="overflow-x-auto">
+    <table class="table">
+
+        <thead>
+            <tr>
+                <th>ID rezultata</th>
+                <th>ID korisnika</th>
+                <th>ID natjecanja</th>
+                <th>Datum prijavljivanja</th>
+                <th>Broj bodova</th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each result.items}}
+            <tr>
+                <td>{{this.id}}</td>
+                <td>{{this.user_id}}</td>
+                <td>{{this.competition_id}}</td>
+                <td x-data="{}">
+                    <span x-text="new Date('{{this.signeddd_at}}').toLocaleString()"></span>
+                </td>
+                <td>{{this.bodovii}}</td>
+                <td>
+                    <form method="post" action="/competitions/IzmjenaBodova/{{this.id}}" class="flex flex-col gap-2">
+                        <div class="pb-2 flex flex-col">
+                            <label>Bodovi</label>
+                            <input type="text" name="bodovi" required="" minlength="1" maxlength="3"
+                                value="{{this.bodovii}}" />
+                        </div>
+                        <input type="hidden" name="competition_id" value="{{this.competition_id}}" />
+                        <input type="submit" value="Potvrdi" class="flex-1 btn btn-primary" />
+                    </form>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
 {{/if}}
