@@ -130,8 +130,8 @@ router.post("/signin", function (req, res, next) {
 });
 
 
-//////////////////////////////////////////////////////////////
-// SCHEMA signup
+
+// SCHEMA signup          N
 const schema_signup = Joi.object({
   name: Joi.string().min(3).max(50).required(),
   email: Joi.string().email().max(50).required(),
@@ -147,7 +147,7 @@ router.get("/signup", function (req, res, next) {
   res.render("users/signup", { result: { display_form: true } });
 });
 
-// POST /users/signup
+// POST /users/signup      N
 router.post("/signup", function (req, res, next) {
   // do validation
   const result = schema_signup.validate(req.body); 
@@ -175,7 +175,7 @@ router.post("/signup", function (req, res, next) {
   return;
 });
 
-// GET /users/dataProfil
+// GET /users/dataProfil     N
 router.get("/data", authRequired, function (req, res, next) {
   const stmt = db.prepare(`
     SELECT c.name AS competition_name, c.apply_till AS competition_time 
@@ -185,7 +185,7 @@ router.get("/data", authRequired, function (req, res, next) {
   res.render("users/data", { result: { display_form: true, competitions: competitions } });
 });
 
-///////
+
 // GET /users/promjenaLozinke
 router.get("/promjenaLozinke", function (req, res, next) {
   res.render("users/promjenaLozinke", { result: { display_form: true } });
@@ -195,7 +195,7 @@ router.get("/promjenaLozinke", function (req, res, next) {
 router.post("/promjenaLozinke", function (req, res, next) {
   const { email, novaLozinka, ponovljenaLozinka } = req.body;
 
-  // Check if the passwords match
+  
   if (novaLozinka !== ponovljenaLozinka) {
     res.render("users/promjenaLozinke", { result: { passwordnotuniq: true, display_form: true } });
     return;
