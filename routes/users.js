@@ -17,7 +17,7 @@ const schema_data = Joi.object({
 });
 
 // POST /users/data
-router.post("/data/", authRequired, function (req, res, next) {
+router.post("/data", authRequired, function (req, res, next) {
   // do validation
   const result = schema_data.validate(req.body);
   if (result.error) {
@@ -30,7 +30,13 @@ router.post("/data/", authRequired, function (req, res, next) {
   const newPassword = req.body.password;
   const currentUser = req.user;
 
-  let dataChanged = [];
+  // sql upit select ... -> result
+
+  const upit = db.prepare("SELECT users.OIB, users.ustanova, users.datumR FROM users WHERE id = ?"); /// 
+
+
+
+  let dataChanged = [];                                                                                
 
   let emailChanged = false;
   if (newEmail !== currentUser.email) {
@@ -61,19 +67,25 @@ router.post("/data/", authRequired, function (req, res, next) {
     return;
   }
 
-  let query = "UPDATE users SET";
-  if (emailChanged) query += " email = ?,";
-  if (nameChanged) query += " name = ?,";
-  if (passwordChanged) query += " password = ?,";
-  query = query.slice(0, -1);
-  query += " WHERE email = ?;";
-  dataChanged.push(currentUser.email);
+  //pohrana izmjeni podataka 
+  let upitIZMJ = "UPDATE users SET";
 
-  const stmt = db.prepare(query);
+  //dodavanje podataka
+  if (emailChanged) upitIZMJ += " email = ?,";
+  if (nameChanged) upitIZMJ += " name = ?,";
+  if (passwordChanged) upitIZMJ += " password = ?,";
+
+  //makivanje ,
+  upitIZMJ = upitIZMJ.slice(0, -1);
+
+  //pohrana promjena
+  upitIZMJ += " WHERE email = ?;";
+  dataChanged.push(currentUser.email);
+  const stmt = db.prepare(upitIZMJ);
   const updateResult = stmt.run(dataChanged);
 
   if (updateResult.changes && updateResult.changes === 1) {
-    res.render("users/data", { result: { success: true } });
+    res.render("users/data", { result: { success: true, add: users.OIB, add: users.ustanova, add: users.datumR} });   ////
   } else {
     res.render("users/data", { result: { database_error: true } });
   }
@@ -150,7 +162,7 @@ router.get("/signup", function (req, res, next) {
 // POST /users/signup      N
 router.post("/signup", function (req, res, next) {
   // do validation
-  const result = schema_signup.validate(req.body); 
+  const result = schema_signup.validate(req.body);
 
   //NE valja nest
   if (result.error) {
@@ -164,7 +176,7 @@ router.post("/signup", function (req, res, next) {
   }
 
   const passwordHash = bcrypt.hashSync(req.body.password, 10);
-  const stmt2 = db.prepare("INSERT INTO users (email, password, name, signed_at, role, OIB, datumR, ustanova) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+  const stmt2 = db.prepare("INSERT INTO users (email, password, name, signed_at, role, OIB, ustanova, datumR) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
   const insertResult = stmt2.run(req.body.email, passwordHash, req.body.name, new Date().toISOString(), "user", req.body.OIB, req.body.ustanova, req.body.datumR);
 
   if (insertResult.changes && insertResult.changes === 1) {
@@ -177,10 +189,7 @@ router.post("/signup", function (req, res, next) {
 
 // GET /users/dataProfil     N
 router.get("/data", authRequired, function (req, res, next) {
-  const stmt = db.prepare(`
-    SELECT c.name AS competition_name, c.apply_till AS competition_time 
-    FROM signed_up su JOIN competitions c ON su.competition_id = c.id 
-    WHERE su.user_id = ?`);
+  const stmt = db.prepare(`SELECT c.name AS competition_name, c.apply_till AS competition_time FROM signed_up su JOIN competitions c ON su.competition_id = c.id WHERE su.user_id = ?`);
   const competitions = stmt.all(req.user.sub);
   res.render("users/data", { result: { display_form: true, competitions: competitions } });
 });
@@ -195,7 +204,7 @@ router.get("/promjenaLozinke", function (req, res, next) {
 router.post("/promjenaLozinke", function (req, res, next) {
   const { email, novaLozinka, ponovljenaLozinka } = req.body;
 
-  
+
   if (novaLozinka !== ponovljenaLozinka) {
     res.render("users/promjenaLozinke", { result: { passwordnotuniq: true, display_form: true } });
     return;
