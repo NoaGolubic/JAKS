@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
@@ -30,9 +31,9 @@ router.post("/data", authRequired, function (req, res, next) {
   const newPassword = req.body.password;
   const currentUser = req.user;
 
-  // sql upit select ... -> result
-
-  const upit = db.prepare("SELECT users.OIB, users.ustanova, users.datumR FROM users WHERE id = ?"); /// 
+  const selectQuery = "SELECT OIB, datumR, ustanova FROM users WHERE email = ?";
+  const selectStmt = db.prepare(selectQuery);
+  const userData = selectStmt.get(currentUser.email);
 
 
 
@@ -63,7 +64,7 @@ router.post("/data", authRequired, function (req, res, next) {
   }
 
   if (!emailChanged && !nameChanged && !passwordChanged) {
-    res.render("users/data", { result: { display_form: true } });
+    res.render("users/data", { result: { display_form: true, userData : userData} });
     return;
   }
 
@@ -85,10 +86,14 @@ router.post("/data", authRequired, function (req, res, next) {
   const updateResult = stmt.run(dataChanged);
 
   if (updateResult.changes && updateResult.changes === 1) {
-    res.render("users/data", { result: { success: true, add: users.OIB, add: users.ustanova, add: users.datumR} });   ////
-  } else {
-    res.render("users/data", { result: { database_error: true } });
-  }
+    if (!emailChanged && !nameChanged && !passwordChanged) {
+      // Include OIB, ustanova, and datumR in the userData object
+      userData.OIB = req.body.OIB;
+      userData.ustanova = req.body.ustanova;
+      userData.datumR = req.body.datumR;
+      res.render("users/data", { result: { display_form: true, userData: userData } });
+      return;
+  }}
 });
 
 // GET /users/signout
