@@ -1,5 +1,4 @@
-
-const express = require("express");
+express = require("express");
 const router = express.Router();
 const Joi = require("joi");
 const { db } = require("../services/db.js");
@@ -8,7 +7,17 @@ const bcrypt = require("bcrypt");
 
 // GET /users/data
 router.get("/data", authRequired, function (req, res, next) {
-  res.render("users/data", { result: { display_form: true } });
+
+
+  const stmt2 = db.prepare("SELECT * FROM users WHERE id = ?; ");
+podaci = stmt2.all(req.user.sub);
+
+console.log(podaci);
+
+res.render("users/data", { result: { display_form: true, items: podaci } });
+
+
+
 });
 
 const schema_data = Joi.object({
@@ -31,10 +40,9 @@ router.post("/data", authRequired, function (req, res, next) {
   const newPassword = req.body.password;
   const currentUser = req.user;
 
-  const selectQuery = "SELECT OIB, datumR, ustanova FROM users WHERE email = ?";
-  const selectStmt = db.prepare(selectQuery);
-  const userData = selectStmt.get(currentUser.email);
-
+  // sql upit select ... -> result
+// do a selection of OIB, datumR and ustanova from table users
+  
 
 
   let dataChanged = [];                                                                                
@@ -64,7 +72,7 @@ router.post("/data", authRequired, function (req, res, next) {
   }
 
   if (!emailChanged && !nameChanged && !passwordChanged) {
-    res.render("users/data", { result: { display_form: true, userData : userData} });
+    res.render("users/data", { result: { display_form: true } });
     return;
   }
 
@@ -86,14 +94,10 @@ router.post("/data", authRequired, function (req, res, next) {
   const updateResult = stmt.run(dataChanged);
 
   if (updateResult.changes && updateResult.changes === 1) {
-    if (!emailChanged && !nameChanged && !passwordChanged) {
-      // Include OIB, ustanova, and datumR in the userData object
-      userData.OIB = req.body.OIB;
-      userData.ustanova = req.body.ustanova;
-      userData.datumR = req.body.datumR;
-      res.render("users/data", { result: { display_form: true, userData: userData } });
-      return;
-  }}
+    res.render("users/data", { result: { success: true, items: podaci/*add OIB, ustanova, datumR*/} });   ////
+  } else {
+    res.render("users/data", { result: { database_error: true } });
+  }
 });
 
 // GET /users/signout
@@ -231,3 +235,4 @@ router.post("/promjenaLozinke", function (req, res, next) {
 });
 
 module.exports = router;
+

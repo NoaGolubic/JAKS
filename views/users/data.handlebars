@@ -9,18 +9,22 @@
             <label>E-mail adresa</label>
             <input type="text" name="email" value="{{user.email}}" class="bg-white" readonly />
         </div>
+
+        {{#each result.items}}
         <div class="pb-2 flex flex-col w-1/3">
             <label>Datum rođenja</label>
-            <input type="text" name="datumR" value="{{result.datumR}}"  class="bg-white" readonly />
+            <input type="text" name="datumR" value="{{this.datumR}}"  class="bg-white" readonly />
         </div>
         <div class="pb-2 flex flex-col w-1/3">
             <label>OIB</label>
-            <input type="text" name="OIB" value="{{result.OIB}}"  class="bg-white" readonly />
+            <input type="text" name="OIB" value="{{this.OIB}}"  class="bg-white" readonly />
         </div>
         <div class="pb-2 flex flex-col w-1/3">
             <label>Ustanova</label>
-            <input type="text" name="ustanova" value="{{result.ustanova}}"  class="bg-white" readonly />
+            <input type="text" name="ustanova" value="{{this.ustanova}}"  class="bg-white" readonly />
         </div>
+
+        {{/each}}
         {{> form_buttons }}
         
     </form>
